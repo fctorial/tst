@@ -1,0 +1,24 @@
+
+
+### Created by https://www.gitignore.io
+### Clojure ###
+pom.xml
+settings.xml
+pom.xml.asc
+*.jar
+*.class
+/lib/
+/classes/
+/target/
+/checkouts/
+.lein-deps-sum
+.lein-repl-history
+.lein-plugins/
+.lein-failures
+.nrepl-port
+.nrepl-history
+.cpcache/
+.clj-kondo/.cache/
+
+test/data
+lsp
