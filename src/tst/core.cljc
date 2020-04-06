@@ -1,5 +1,5 @@
-(ns tester.core
-  (:require [tester.predicates :refer :all]))
+(ns tst.core
+  (:require [tst.predicates :refer :all]))
 
 (defmacro testing [name & body]
   (let [{subs :testing fns :main} (group-by #(if (and (seqable? %)

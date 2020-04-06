@@ -1,4 +1,4 @@
-(ns tester.predicates)
+(ns tst.predicates)
 
 (defn eq
   ([val1 val2] (eq val1 val2 nil))
