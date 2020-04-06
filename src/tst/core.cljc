@@ -1,10 +1,14 @@
 (ns tst.core
   (:require [tst.predicates :refer :all]))
 
+(defn grouper [b]
+  (group-by #(if (and (seqable? %)
+                      (symbol? (first %))
+                      (= "testing" (name (first %))))
+               :testing :main) b))
+
 (defmacro testing [name & body]
-  (let [{subs :testing fns :main} (group-by #(if (and (seqable? %)
-                                                      (= 'testing (first %)))
-                                               :testing :main) body)
+  (let [{subs :testing fns :main} (grouper body)
         res (into {} (map #(macroexpand %)
                           subs))]
     {name (if fns
@@ -57,7 +61,7 @@
                       :OK))
        treefy-result))
 
-(defn get-tests-with-result [res st]
+(defn filter-tests-by-result [res st]
   (->> res
        flatten-result
        (filter #(= st (:result (second %))))
