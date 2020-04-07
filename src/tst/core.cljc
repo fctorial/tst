@@ -35,10 +35,11 @@
                 (run-test body))])))
 
 (defn -flatten-result [res]
-  (reduce concat (for [[name body] res]
-     (if (= :main name)
-       [['(:main) body]]
-       (map #(update % 0 (fn [e] (cons name e))) (-flatten-result body))))))
+  (apply concat
+         (for [[name body] res]
+           (if (= :main name)
+             [['(:main) body]]
+             (map #(update % 0 (fn [e] (cons name e))) (-flatten-result body))))))
 
 (defn flatten-result [res]
   (into {} (-flatten-result res)))

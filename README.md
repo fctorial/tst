@@ -4,15 +4,15 @@
 
 ### Leiningen/Boot
 
-    [fctorial/tst "0.3.0"]
+    [fctorial/tst "0.3.1"]
 
 ### Clojure CLI/deps.edn
 
-    fctorial/tst {:mvn/version "0.3.0"}
+    fctorial/tst {:mvn/version "0.3.1"}
 
 ### Gradle
 
-    compile 'fctorial:tst:0.3.0'
+    compile 'fctorial:tst:0.3.1'
 
 ### Maven
 
@@ -20,7 +20,7 @@
 <dependency>
   <groupId>fctorial</groupId>
   <artifactId>tst</artifactId>
-  <version>0.3.0</version>
+  <version>0.3.1</version>
 </dependency>
 ```
 
