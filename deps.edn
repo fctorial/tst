@@ -1,2 +1,3 @@
 {:deps {}
- :aliases {}}
+ :aliases {:test {:extra-paths ["test"]
+                  :extra-deps {org.clojure/clojurescript {:mvn/version "1.10.597"}}}}}

@@ -9,6 +9,8 @@
 (def VecType #?(:clj clojure.lang.PersistentVector
                 :cljs cljs.core/PersistentVector))
 
+(defmacro m [a b]
+  `(+ a b))
 ; name !== :main
 ; params == [symbol]
 (defmacro testing [name & rst]
@@ -16,18 +18,21 @@
                           rst
                           (cons [] rst))
         {subs :testing fns :main} (grouper body)
-        res (into {} (map #(macroexpand %)
-                          subs))
+        res (mapv
+              (fn [s]
+                (let [n (second s)]
+                  `[~n (~s ~n)]))
+              subs)
         args (->> params
                   (map (fn [p] `[~p '~p]))
                   (into {}))
         fn `(fn [~args]
               ~@fns)]
-    {name (if fns
-            (assoc res :main `(with-meta ~fn
-                                         {:code   (quote ~fn)
-                                          :params '~params}))
-            res)}))
+    {name (into {} (if fns
+                     (conj res [:main `(with-meta ~fn
+                                                  {:code   (quote ~fn)
+                                                   :params '~params})])
+                     res))}))
 
 (defn run-test [ts]
   (into {} (for [[name body] ts]
@@ -41,7 +46,7 @@
                     (try
                       (body param_bindings)
                       (catch #?(:clj  Throwable
-                                :cljs js/Object) e
+                                :cljs :default) e
                         {:result    :EXCEPTION
                          :exception e}))
                     :context code

@@ -30,6 +30,3 @@
 
 See https://github.com/fctorial/parse_struct/master/test/all_tests.clj for more examples.
 
-## TODO:
-
-* Clojurescript support
