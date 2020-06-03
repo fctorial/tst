@@ -26,7 +26,7 @@
 
 ## Usage:
 
-[See this](test/usage.clj)
+[Examples](test/usage.cljc)
 
 See https://github.com/fctorial/parse_struct/master/test/all_tests.clj for more examples.
 
