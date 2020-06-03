@@ -9,8 +9,6 @@
 (def VecType #?(:clj clojure.lang.PersistentVector
                 :cljs cljs.core/PersistentVector))
 
-(defmacro m [a b]
-  `(+ a b))
 ; name !== :main
 ; params == [symbol]
 (defmacro testing [name & rst]

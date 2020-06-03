@@ -1,5 +1,6 @@
 (ns usage
-  (:require [tst.core :refer [run-test get-failed summarize-result combine-tests flatten-result testing] :refer-macros [testing]]))
+  (:require [tst.core :refer [run-test get-failed summarize-result combine-tests flatten-result testing] :refer-macros [testing]]
+            [cljs.pprint :refer [pprint]]))
 
 ; 'testing' returns a test spec that can be passed to 'run-test'
 (def t (testing :a
