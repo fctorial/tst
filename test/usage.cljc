@@ -1,16 +1,17 @@
 (ns usage
   (:require [tst.core :refer [run-test get-failed summarize-result combine-tests flatten-result testing] :refer-macros [testing]]
-            [cljs.pprint :refer [pprint]]))
+            [#?(:clj clojure.pprint
+                :cljs cljs.pprint) :refer [pprint]]))
 
 ; 'testing' returns a test spec that can be passed to 'run-test'
 (def t (testing :a
-                (testing :b
+                (testing :b []
                          {:result :OK})
-                (testing :c
+                (testing :c []
                          {:result  :ERR
                           :message "failing test"})
-                (testing :d
-                         (throw (new Error))
+                (testing :d []
+                         (throw (ex-info "" {}))
                          {:result  :OK
                           :message "ignored"})
                 {:result  :ERR
@@ -64,16 +65,16 @@
 
 (defn int-tests []
   (testing :ints
-           (testing :adding_1
+           (testing :adding_1 []
                     (if (= (+ 5 1) 6)
                       {:result :OK}
                       {:result :ERR}))
-           (testing :adding_2
+           (testing :adding_2 []
                     (if (= (+ 5 2) 6)
                       {:result :OK}
                       {:result  :ERR
                        :message "values not equal"}))
-           (testing :failing_test
+           (testing :failing_test []
                     (throw (new Error)))))
 
 (defn string-tests []
@@ -129,7 +130,7 @@
                                          {:result :OK}),
                             :state     {a 0, b 1, c :tst/UNINITIALIZED}}}}
 
-(enable-console-print!)
+;(enable-console-print!)
 ; summary
 (defn summarize [r]
   (println (summarize-result r)))

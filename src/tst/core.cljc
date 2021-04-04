@@ -1,41 +1,35 @@
-(ns tst.core)
+(ns tst.core
+  (:require [clojure.pprint :refer [pprint]]))
 
-(defn grouper [b]
-  (group-by #(if (and (seqable? %)
-                      (symbol? (first %))
-                      (= "testing" (name (first %))))
-               :testing :main) b))
-
-(def VecType #?(:clj clojure.lang.PersistentVector
+(def VecType #?(:clj  clojure.lang.PersistentVector
                 :cljs cljs.core/PersistentVector))
 
-; name !== :main
-; params == [symbol]
 (defmacro testing [name & rst]
-  (let [[params & body] (if (instance? VecType (first rst))
-                          rst
-                          (cons [] rst))
-        {subs :testing fns :main} (grouper body)
-        res (mapv
-              (fn [s]
-                (let [n (second s)]
-                  `[~n (~s ~n)]))
-              subs)
-        args (->> params
-                  (map (fn [p] `[~p '~p]))
-                  (into {}))
-        fn `(fn [~args]
-              ~@fns)]
-    {name (into {} (if fns
-                     (conj res [:main `(with-meta ~fn
-                                                  {:code   (quote ~fn)
-                                                   :params '~params})])
-                     res))}))
+  (if (= name :result)
+    (throw (ex-info ":result cannot be used as a test suite name" {})))
+  (if (instance? VecType (first rst))
+    (let [[params & body] rst
+          _ (if (not (every? symbol? params))
+              (throw (ex-info "non-symbol in parameter list" {})))
+          args (->> params
+                    (map (fn [p] `[~p '~p]))
+                    (into {}))
+          fn `(fn [~args]
+                ~@body)]
+      {name `(with-meta ~fn
+                        {:code   (quote ~fn)
+                         :params '~params})})
+    {name (into {}
+                (map
+                  (fn [s]
+                    (let [sname (second s)]
+                      `[~sname (~s ~sname)]))
+                  rst))}))
 
 (defn run-test [ts]
   (into {} (for [[name body] ts]
              [name
-              (if (= name :main)
+              (if (fn? body)
                 (let [{params :params code :code} (meta body)
                       param_bindings (->> params
                                           (map (fn [p] [p (atom :tst/UNINITIALIZED)]))
@@ -55,17 +49,18 @@
 
 (defn flatten-result [res]
   (apply concat (for [[name body] res]
-                  (if (= :main name)
-                    [(assoc body :path '(:main))]
+                  (if (:result body)
+                    [(assoc body :path `(~name))]
                     (map #(update % :path conj name) (flatten-result body))))))
 
 (defn treefy-result [res]
   (let [chs (group-by #(first (:path %)) res)]
     (reduce
-      (fn [r [name body]]
-        (assoc r name (if (= name :main)
-                        (dissoc (first body) :path)
-                        (treefy-result (map #(update % :path rest) body)))))
+      (fn [r [name results]]
+        (assoc r name (if (and (= (count results) 1)
+                               (= (count (get-in results [0 :path])) 1))
+                        (dissoc (first results) :path)
+                        (treefy-result (map #(update % :path rest) results)))))
       {}
       chs)))
 
