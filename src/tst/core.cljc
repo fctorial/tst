@@ -27,25 +27,24 @@
                   rst))}))
 
 (defn run-test [ts]
-  (into {} (for [[name body] ts]
-             [name
-              (if (fn? body)
-                (let [{params :params code :code} (meta body)
-                      param_bindings (->> params
-                                          (map (fn [p] [p (atom :tst/UNINITIALIZED)]))
-                                          (into {}))]
-                  (assoc
-                    (try
-                      (body param_bindings)
-                      (catch #?(:clj  Throwable
-                                :cljs :default) e
-                        {:result    :EXCEPTION
-                         :exception e}))
-                    :context code
-                    :state (->> param_bindings
-                                (map (fn [[k v]] [k @v]))
-                                (into {}))))
-                (run-test body))])))
+  (if (fn? ts)
+    (let [{params :params code :code} (meta ts)
+          param_bindings (->> params
+                              (map (fn [p] [p (atom :tst/UNINITIALIZED)]))
+                              (into {}))
+          result (try
+                   (ts param_bindings)
+                   (catch #?(:clj  Throwable
+                             :cljs :default) e
+                     {:result    :EXCEPTION
+                      :exception e}))]
+      (if (empty? param_bindings)
+        result
+        (assoc result :state (->> param_bindings
+                                  (map (fn [[k v]] [k @v]))
+                                  (into {})))))
+    (into {} (for [[name body] ts]
+               [name (run-test body)]))))
 
 (defn flatten-result [res]
   (apply concat (for [[name body] res]
