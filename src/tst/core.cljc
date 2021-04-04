@@ -1,5 +1,4 @@
-(ns tst.core
-  (:require [clojure.pprint :refer [pprint]]))
+(ns tst.core)
 
 (def VecType #?(:clj  clojure.lang.PersistentVector
                 :cljs cljs.core/PersistentVector))
