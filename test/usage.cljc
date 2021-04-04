@@ -79,7 +79,7 @@
 
 (defn string-tests []
   (testing :strings
-           (testing :concating_asdf
+           (testing :concating_asdf []
                     (if (= (str "hello" "asdf") "helloasdf")
                       {:result :OK}
                       {:result :ERR}))))
