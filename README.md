@@ -20,11 +20,9 @@
 <dependency>
   <groupId>fctorial</groupId>
   <artifactId>tst</artifactId>
-  <version>0.5.0</version>
+  <version>0.6.0</version>
 </dependency>
 ```
 
 [Guide](https://fctorial.github.io/posts/tst.html)
-
-See https://github.com/fctorial/parse_struct/blob/master/test/all_tests.clj for more examples.
 
